@@ -78,7 +78,7 @@ Then run: `claude-code "帮我查看青龙面板的定时任务"`
 
 ```bash
 # Via ClawHub (recommended)
-clawhub install qinglong
+clawhub install qinglong-skills
 
 # Or via npx
 npx skills add NNNNzs/qinglong-skills
