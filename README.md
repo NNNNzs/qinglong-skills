@@ -2,6 +2,8 @@
 
 OpenClaw / Claude Code skill for controlling [QingLong (青龙)](https://github.com/whyour/qinglong) panel.
 
+**[中文文档](README_zh-CN.md)**
+
 ## Features
 
 - **Cron Jobs** — list, create, update, delete, run, stop, enable/disable, pin/unpin, view logs
