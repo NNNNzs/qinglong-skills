@@ -42,13 +42,19 @@ OpenClaw / Claude Code skill for controlling [QingLong (青龙)](https://github.
 
 ### Install the Skill
 
-**Option A: Copy to workspace skills directory**
+**Option A: Via ClawHub (recommended)**
 
 ```bash
-cp -r qinglong-skills ~/.openclaw/workspace/skills/qinglong
+clawhub install qinglong
 ```
 
-**Option B: Use `extraDirs` (recommended for development)**
+**Option B: Via npx**
+
+```bash
+npx skills add NNNNzs/qinglong-skills
+```
+
+**Option C: Use `extraDirs` (recommended for development)**
 
 Add to `~/.openclaw/openclaw.json`:
 
@@ -60,6 +66,12 @@ Add to `~/.openclaw/openclaw.json`:
     }
   }
 }
+```
+
+**Option D: Copy to workspace skills directory**
+
+```bash
+cp -r qinglong-skills ~/.openclaw/workspace/skills/qinglong
 ```
 
 ### Configure Environment Variables in `openclaw.json`

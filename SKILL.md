@@ -1,6 +1,6 @@
 ---
 name: qinglong
-description: Manage QingLong (青龙) panel — cron jobs, environment variables, scripts, dependencies, logs and system operations. Supports OpenClaw Gateway UI configuration for panel URL, client_id and client_secret.
+description: Manage QingLong (青龙) panel — cron jobs, environment variables, scripts, dependencies, logs and system operations.
 metadata: {"openclaw": {"emoji": "🐉", "requires": {"bins": ["curl", "jq"], "env": ["QINGLONG_URL", "QINGLONG_CLIENT_ID", "QINGLONG_CLIENT_SECRET"]}}}
 ---
 
@@ -8,173 +8,179 @@ metadata: {"openclaw": {"emoji": "🐉", "requires": {"bins": ["curl", "jq"], "e
 
 Control your [QingLong (青龙)](https://github.com/whyour/qinglong) scheduled task panel via REST API.
 
-## Setup
+📦 ClawHub: https://clawhub.ai/nnnnzs/qinglong-skills
+📖 GitHub: https://github.com/NNNNzs/qinglong-skills
+
+## Prerequisites
+
+- `curl` and `jq` installed
+- A running QingLong panel with Open API enabled
+
+## Get QingLong API Credentials
 
 1. Open QingLong web UI → **Configuration** → **Application**
-2. Create a new application, select the scopes you need (crons / envs / scripts / logs / system)
-3. Copy the **Client ID** and **Client Secret**
-4. Set environment variables in OpenClaw Gateway UI:
-   - `QINGLONG_URL` — panel address (e.g. `http://192.168.1.100:5700`)
-   - `QINGLONG_CLIENT_ID` — the Client ID
-   - `QINGLONG_CLIENT_SECRET` — the Client Secret
+2. Click **Create Application**
+3. Select the scopes you need (crons / envs / scripts / logs / system)
+4. Copy the **Client ID** and **Client Secret**
 
-## Quick Start
+## Required Environment Variables
 
-Use the wrapper script for all operations:
+| Variable | Description |
+|----------|-------------|
+| `QINGLONG_URL` | Panel base URL (e.g. `http://192.168.1.100:5700`) |
+| `QINGLONG_CLIENT_ID` | Open API Client ID |
+| `QINGLONG_CLIENT_SECRET` | Open API Client Secret |
+
+## Setup for Claude Code CLI
+
+This skill works with Claude Code CLI or any agent that can execute shell commands.
+
+### 1. Set environment variables
+
+Add to your `~/.bashrc` or `~/.zshrc`:
 
 ```bash
-# List all cron jobs
+export QINGLONG_URL="https://ql.yourdomain.com"
+export QINGLONG_CLIENT_ID="your_client_id"
+export QINGLONG_CLIENT_SECRET="your_client_secret"
+```
+
+Then reload: `source ~/.bashrc`
+
+### 2. Test the connection
+
+```bash
 scripts/ql.sh cron list
+```
 
-# Get a specific cron job
-scripts/ql.sh cron get <id>
+### 3. Use with Claude Code
 
-# Create a cron job
-scripts/ql.sh cron create --command "task test.js" --schedule "0 0 * * *" --name "My Task"
+Create a `CLAUDE.md` in your project root:
 
-# Run a cron job
-scripts/ql.sh cron run <id>
+```markdown
+# QingLong Panel Management
 
-# Stop a running cron
-scripts/ql.sh cron stop <id>
+Use `scripts/ql.sh` to manage the QingLong panel.
 
-# Enable / Disable crons
-scripts/ql.sh cron enable <id>
-scripts/ql.sh cron disable <id>
+Common commands:
+- `scripts/ql.sh cron list` — List all cron jobs
+- `scripts/ql.sh env list` — List environment variables
+- `scripts/ql.sh system info` — Get system info
 
-# Delete crons
-scripts/ql.sh cron delete <id>
+Full reference: see SKILL.md in this directory.
+```
 
-# Pin / Unpin
-scripts/ql.sh cron pin <id>
-scripts/ql.sh cron unpin <id>
+Then run: `claude-code "帮我查看青龙面板的定时任务"`
 
-# Get cron log
-scripts/ql.sh cron log <id>
+## Setup for OpenClaw
+
+### Install
+
+```bash
+# Via ClawHub (recommended)
+clawhub install qinglong
+
+# Or via npx
+npx skills add NNNNzs/qinglong-skills
+
+# Or manual copy
+cp -r qinglong-skills ~/.openclaw/workspace/skills/qinglong
+```
+
+### Configure environment variables
+
+Open `~/.openclaw/openclaw.json` and add under `skills.entries`:
+
+```json5
+{
+  "skills": {
+    "entries": {
+      "qinglong": {
+        "enabled": true,
+        "env": {
+          "QINGLONG_URL": "https://ql.yourdomain.com",
+          "QINGLONG_CLIENT_ID": "your_client_id",
+          "QINGLONG_CLIENT_SECRET": "your_client_secret"
+        }
+      }
+    }
+  }
+}
+```
+
+Restart the gateway: `openclaw gateway restart`
+
+## Quick Reference
+
+### Cron Jobs
+
+```bash
+scripts/ql.sh cron list                                    # List all
+scripts/ql.sh cron get <id>                                # Get detail
+scripts/ql.sh cron create --command "task x.js" --schedule "0 0 * * *" --name "Task"
+scripts/ql.sh cron update <id> --name "New Name"
+scripts/ql.sh cron delete <id>                             # Delete (supports multiple IDs)
+scripts/ql.sh cron run <id>                                # Run now
+scripts/ql.sh cron stop <id>                               # Stop
+scripts/ql.sh cron enable <id> / disable <id>              # Enable / Disable
+scripts/ql.sh cron pin <id> / unpin <id>                   # Pin / Unpin
+scripts/ql.sh cron log <id>                                # View log
 ```
 
 ### Environment Variables
 
 ```bash
-# List all envs
-scripts/ql.sh env list
-
-# Create an env
-scripts/ql.sh env create --name "JD_COOKIE" --value "pt_key=xxx;pt_pin=xxx" --remarks "备注"
-
-# Update an env
-scripts/ql.sh env update --id <id> --name "JD_COOKIE" --value "new_value"
-
-# Delete envs
-scripts/ql.sh env delete <id1> <id2>
-
-# Enable / Disable envs
-scripts/ql.sh env enable <id>
-scripts/ql.sh env disable <id>
+scripts/ql.sh env list                                     # List all
+scripts/ql.sh env list "JD"                                # Search
+scripts/ql.sh env create --name "KEY" --value "VALUE" --remarks "note"
+scripts/ql.sh env update --id <id> --name "KEY" --value "NEW_VALUE"
+scripts/ql.sh env delete <id>
+scripts/ql.sh env enable <id> / disable <id>
 ```
 
 ### Scripts
 
 ```bash
-# List scripts
-scripts/ql.sh script list
-
-# Get script content
-scripts/ql.sh script get --file "test.js"
-
-# Create / Update script
-scripts/ql.sh script save --file "test.js" --content "console.log('hello')"
-
-# Run a script
-scripts/ql.sh script run --file "test.js"
-
-# Stop a running script
-scripts/ql.sh script stop --file "test.js"
-
-# Delete a script
-scripts/ql.sh script delete --file "test.js"
+scripts/ql.sh script list                                  # List all
+scripts/ql.sh script get --file "test.js"                  # View content
+scripts/ql.sh script save --file "test.js" --content "console.log('hi')"
+scripts/ql.sh script run --file "test.js"                  # Run
+scripts/ql.sh script stop --file "test.js"                 # Stop
+scripts/ql.sh script delete --file "test.js"               # Delete
 ```
 
 ### Dependencies
 
 ```bash
-# List dependencies
-scripts/ql.sh dep list
-
-# Install dependencies
-scripts/ql.sh dep install --name "axios" --type 0
-
-# Reinstall dependencies
+scripts/ql.sh dep list                                     # List all
+scripts/ql.sh dep install --name "axios" --type 0          # 0=node, 1=linux, 2=python3
 scripts/ql.sh dep reinstall <id>
-
-# Delete dependencies
 scripts/ql.sh dep delete <id>
 ```
 
 ### Subscriptions
 
 ```bash
-# List subscriptions
-scripts/ql.sh sub list
-
-# Run / Stop subscription
-scripts/ql.sh sub run <id>
-scripts/ql.sh sub stop <id>
-
-# Enable / Disable subscription
-scripts/ql.sh sub enable <id>
-scripts/ql.sh sub disable <id>
-```
-
-### Logs
-
-```bash
-# List log files
-scripts/ql.sh log list
-
-# Get log content
-scripts/ql.sh log get --file "task.log" [--path "subfolder"]
+scripts/ql.sh sub list / run <id> / stop <id> / enable <id> / disable <id> / delete <id>
 ```
 
 ### System
 
 ```bash
-# Get system info
-scripts/ql.sh system info
-
-# Get system config
-scripts/ql.sh system config
-
-# Check for updates
-scripts/ql.sh system check-update
-
-# Reload system
-scripts/ql.sh system reload
-
-# Run a command
-scripts/ql.sh system command-run --command "task test.js"
+scripts/ql.sh system info                                  # System info
+scripts/ql.sh system config                                # System config
+scripts/ql.sh system check-update                          # Check updates
+scripts/ql.sh system reload                                # Reload
+scripts/ql.sh system command-run --command "task test.js"  # Run command
+scripts/ql.sh system auth-reset --username admin --password newpass
 ```
 
-## Common Patterns
+### Token Management
 
-### Check all tasks status
 ```bash
-scripts/ql.sh cron list | jq '.data[] | {id, name, status, schedule}'
-```
-
-### Find disabled tasks
-```bash
-scripts/ql.sh cron list | jq '.data[] | select(.isDisabled == 1) | {id, name}'
-```
-
-### Batch enable tasks
-```bash
-scripts/ql.sh cron enable 1 2 3 4 5
-```
-
-### Export envs
-```bash
-scripts/ql.sh env list | jq '.data[] | {name, value}'
+scripts/ql.sh token refresh                                # Force refresh
+scripts/ql.sh token show                                   # Show cached
+scripts/ql.sh token clear                                  # Clear cache
 ```
 
 ## Troubleshooting

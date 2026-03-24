@@ -42,13 +42,19 @@
 
 ### 安装技能
 
-**方式 A：复制到 workspace skills 目录**
+**方式 A：通过 ClawHub 安装（推荐）**
 
 ```bash
-cp -r qinglong-skills ~/.openclaw/workspace/skills/qinglong
+clawhub install qinglong
 ```
 
-**方式 B：使用 `extraDirs`（推荐用于开发）**
+**方式 B：通过 npx 安装**
+
+```bash
+npx skills add NNNNzs/qinglong-skills
+```
+
+**方式 C：使用 `extraDirs`（推荐用于开发）**
 
 在 `~/.openclaw/openclaw.json` 中添加：
 
@@ -60,6 +66,12 @@ cp -r qinglong-skills ~/.openclaw/workspace/skills/qinglong
     }
   }
 }
+```
+
+**方式 D：复制到 workspace skills 目录**
+
+```bash
+cp -r qinglong-skills ~/.openclaw/workspace/skills/qinglong
 ```
 
 ### 在 `openclaw.json` 中配置环境变量
