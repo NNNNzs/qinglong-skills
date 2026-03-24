@@ -1,38 +1,7 @@
 ---
 name: qinglong
 description: Manage QingLong (青龙) panel — cron jobs, environment variables, scripts, dependencies, logs and system operations. Supports OpenClaw Gateway UI configuration for panel URL, client_id and client_secret.
-metadata:
-  {
-    "openclaw":
-      {
-        "emoji": "🐉",
-        "requires": { "bins": ["curl", "jq"] },
-        "env":
-          {
-            "QINGLONG_URL":
-              {
-                "label": "青龙面板地址",
-                "description": "QingLong panel base URL, e.g. http://192.168.1.100:5700",
-                "required": true,
-                "secret": false,
-              },
-            "QINGLONG_CLIENT_ID":
-              {
-                "label": "Client ID",
-                "description": "Open API Client ID from QingLong panel → Configuration → Application",
-                "required": true,
-                "secret": false,
-              },
-            "QINGLONG_CLIENT_SECRET":
-              {
-                "label": "Client Secret",
-                "description": "Open API Client Secret from QingLong panel → Configuration → Application",
-                "required": true,
-                "secret": true,
-              },
-          },
-      },
-  }
+metadata: {"openclaw": {"emoji": "🐉", "requires": {"bins": ["curl", "jq"], "env": ["QINGLONG_URL", "QINGLONG_CLIENT_ID", "QINGLONG_CLIENT_SECRET"]}}}
 ---
 
 # QingLong Panel Skill

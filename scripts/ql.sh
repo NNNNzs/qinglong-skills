@@ -100,7 +100,7 @@ api() {
   local token
   token=$(get_token)
 
-  local url="${QL_URL}/api${path}"
+  local url="${QL_URL}/open${path}"
   [[ -n "$query" ]] && url="${url}?${query}"
 
   local args=(-sf -X "$method" -H "Authorization: Bearer $token" -H "Content-Type: application/json")
